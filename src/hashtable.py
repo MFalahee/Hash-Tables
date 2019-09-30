@@ -51,8 +51,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # Make the key a valid integer index
+        hashed_key = self._hash_mod(key)
+        # print('Insert, KEY: ', key, ' HKEY ', hashed_key, ' VALUE ', value)
+        # Store it
+        if self.storage[hashed_key] is not None:
+            print("This key already exists, overwriting.")
+        self.storage[hashed_key] = LinkedPair(key, value)
 
 
     def remove(self, key):
@@ -63,7 +68,12 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
+        if self.storage[hashed_key] is None:
+            print("Key not found.")
+        else: 
+            self.storage[hashed_key] = None
+
 
 
     def retrieve(self, key):
@@ -74,7 +84,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
+
+        if self.storage[hashed_key] == None:
+            return None
+
+        else:
+            print('retrieve KEY ', key, ' HKEY ', hashed_key)
+            print('retrieve return', self.storage[hashed_key].value)
+            return self.storage[hashed_key].value
 
 
     def resize(self):
