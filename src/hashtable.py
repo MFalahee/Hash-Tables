@@ -52,16 +52,29 @@ class HashTable:
 
         Fill this in.
         '''
+        # if self.count >= self.capacity:
+        #     self.resize()
 
         # Make the key a valid integer index
         hashed_key = self._hash_mod(key)
         
         # Store it
         if self.storage[hashed_key] is not None:
-            print("Warning: This key already exists in storage")
-            return
+            # print("This key already exists in storage, adding it to chain at index: ", hashed_key)
+            current = self.storage[hashed_key]
+            while True:
+                if current.next is None:
+                    current.next = LinkedPair(key, value)
+                    self.count += 1
+                    break
+                elif current.next is not None:
+                    current = current.next
+                else:
+                    print('Warning: Error inserting value.')
 
-        self.storage[hashed_key] = LinkedPair(key, value)
+        else:
+            self.storage[hashed_key] = LinkedPair(key, value)
+            self.count += 1
         
 
 
@@ -92,10 +105,18 @@ class HashTable:
         Fill this in.
         '''
         hashed_key = self._hash_mod(key)
+
         if self.storage[hashed_key] is None:
             return self.storage[hashed_key]
+        
+        else:
+            current = self.storage[hashed_key]
+            while current is not None:
+                if current.key is key:
+                    return current.value
+                else:
+                    current = current.next
 
-        return self.storage[hashed_key].value
 
 
     def resize(self):
@@ -106,17 +127,17 @@ class HashTable:
         Fill this in.
         '''
         # Double capacity, fill it with None
-        self.capacity *= 2
-        new_storage = [None] * self.capacity
+        # self.capacity *= 2
+        # new_storage = [None] * self.capacity
 
-        # Rehash keys for placement in our working storage
-        for item in self.storage:
-            if item is not None:
-                new_hashed_key = self._hash_mod(item.key)
-                new_storage[new_hashed_key] = item
+        # # Rehash keys for placement in our working storage
+        # for item in self.storage:
+        #     if item is not None:
+        #         new_hashed_key = self._hash_mod(item.key)
+        #         new_storage[new_hashed_key] = item
 
-        # Set our class storage equal to our working storage once we are done
-        self.storage = new_storage
+        # # Set our class storage equal to our working storage once we are done
+        # self.storage = new_storage
 
 
 if __name__ == "__main__":
