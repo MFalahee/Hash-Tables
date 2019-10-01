@@ -63,12 +63,22 @@ class HashTable:
             # print("This key already exists in storage, adding it to chain at index: ", hashed_key)
             current = self.storage[hashed_key]
             while True:
+                #overwrite values when the key is the same
+                if current.key is key:
+                    current.value = value
+                    break
+
+                #check if there is another pair next, if not add this one to the chain
                 if current.next is None:
                     current.next = LinkedPair(key, value)
                     self.count += 1
                     break
+
+                #move to the next pair
                 elif current.next is not None:
                     current = current.next
+
+                #failsafe error
                 else:
                     print('Warning: Error inserting value.')
 
@@ -92,6 +102,11 @@ class HashTable:
             print("Warning: key not found.")
             return
         else: 
+            # current = self.storage[hashed_key]
+            # while True:
+            #     if current.key is key:
+            #         current.value = None
+
             self.storage[hashed_key] = None
 
 
@@ -127,17 +142,33 @@ class HashTable:
         Fill this in.
         '''
         # Double capacity, fill it with None
-        # self.capacity *= 2
-        # new_storage = [None] * self.capacity
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
 
         # # Rehash keys for placement in our working storage
-        # for item in self.storage:
-        #     if item is not None:
-        #         new_hashed_key = self._hash_mod(item.key)
-        #         new_storage[new_hashed_key] = item
+        for item in self.storage:
+            if item is not None:
+                current = item
+                while current is not None:
+                    new_hashed_key = self._hash_mod(current.key)
+
+                    #if there's already a collision in the new_storage, we have to mimic the insert function
+                    if new_storage[new_hashed_key] is None:
+                        new_storage[new_hashed_key] = LinkedPair(current.key, current.value)
+
+                    else:
+                        new_current = new_storage[new_hashed_key]
+                        while True:
+                            if new_current.next is None:
+                                new_current.next = LinkedPair(current.key, current.value)
+                                break
+                            else:
+                                new_current = new_current.next
+
+                    current = current.next
 
         # # Set our class storage equal to our working storage once we are done
-        # self.storage = new_storage
+        self.storage = new_storage
 
 
 if __name__ == "__main__":
