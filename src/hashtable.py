@@ -15,6 +15,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -51,13 +52,17 @@ class HashTable:
 
         Fill this in.
         '''
+
         # Make the key a valid integer index
         hashed_key = self._hash_mod(key)
         # print('Insert, KEY: ', key, ' HKEY ', hashed_key, ' VALUE ', value)
         # Store it
         if self.storage[hashed_key] is not None:
-            print("This key already exists, overwriting.")
-        self.storage[hashed_key] = LinkedPair(key, value)
+            print("This key already exists in storage")
+            return
+
+        # self.storage[hashed_key] = LinkedPair(key, value)
+        self.storage[hashed_key] = value
 
 
     def remove(self, key):
@@ -69,8 +74,10 @@ class HashTable:
         Fill this in.
         '''
         hashed_key = self._hash_mod(key)
+
         if self.storage[hashed_key] is None:
-            print("Key not found.")
+            print("Warning: key not found.")
+            return
         else: 
             self.storage[hashed_key] = None
 
@@ -85,14 +92,7 @@ class HashTable:
         Fill this in.
         '''
         hashed_key = self._hash_mod(key)
-
-        if self.storage[hashed_key] == None:
-            return None
-
-        else:
-            print('retrieve KEY ', key, ' HKEY ', hashed_key)
-            print('retrieve return', self.storage[hashed_key].value)
-            return self.storage[hashed_key].value
+        return self.storage[hashed_key]
 
 
     def resize(self):
@@ -102,9 +102,11 @@ class HashTable:
 
         Fill this in.
         '''
+        old_capacity = self.capacity
         self.capacity *= 2
         new_storage = [None] * self.capacity
-        for i in range(0, self.capacity):
+        for i in range(0, old_capacity):
+                print('Storage data', self.storage[i])
                 new_storage[i] = self.storage[i]
         
         self.storage = new_storage
@@ -120,6 +122,7 @@ if __name__ == "__main__":
     print("")
 
     # Test storing beyond capacity
+    print('First retrievals ----------------')
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
@@ -132,6 +135,7 @@ if __name__ == "__main__":
     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
     # Test if data intact after resizing
+    print('Second retrievals ------------------')
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
