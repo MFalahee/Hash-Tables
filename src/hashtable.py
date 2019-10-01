@@ -55,14 +55,14 @@ class HashTable:
 
         # Make the key a valid integer index
         hashed_key = self._hash_mod(key)
-        # print('Insert, KEY: ', key, ' HKEY ', hashed_key, ' VALUE ', value)
+        
         # Store it
         if self.storage[hashed_key] is not None:
-            print("This key already exists in storage")
+            print("Warning: This key already exists in storage")
             return
 
-        # self.storage[hashed_key] = LinkedPair(key, value)
-        self.storage[hashed_key] = value
+        self.storage[hashed_key] = LinkedPair(key, value)
+        
 
 
     def remove(self, key):
@@ -92,7 +92,10 @@ class HashTable:
         Fill this in.
         '''
         hashed_key = self._hash_mod(key)
-        return self.storage[hashed_key]
+        if self.storage[hashed_key] is None:
+            return self.storage[hashed_key]
+
+        return self.storage[hashed_key].value
 
 
     def resize(self):
@@ -102,13 +105,17 @@ class HashTable:
 
         Fill this in.
         '''
-        old_capacity = self.capacity
+        # Double capacity, fill it with None
         self.capacity *= 2
         new_storage = [None] * self.capacity
-        for i in range(0, old_capacity):
-                print('Storage data', self.storage[i])
-                new_storage[i] = self.storage[i]
-        
+
+        # Rehash keys for placement in our working storage
+        for item in self.storage:
+            if item is not None:
+                new_hashed_key = self._hash_mod(item.key)
+                new_storage[new_hashed_key] = item
+
+        # Set our class storage equal to our working storage once we are done
         self.storage = new_storage
 
 
